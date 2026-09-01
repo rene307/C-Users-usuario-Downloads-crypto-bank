@@ -1,0 +1,113 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <div class="nav-wrap">
+      <div class="brand"><span class="brand-mark">₿</span><span>BitBank</span></div>
+      <div class="status"><span></span> Mercado operativo</div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <main class="shell" *ngIf="portfolio; else loadingState">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">COMPRA Y VENDE CRIPTO EN SEGUNDOS</p>
+        <h1>Bitcoin y Ethereum.<br><span>Sin vueltas.</span></h1>
+        <p class="lead">Un panel simple para comprar y vender BTC o ETH con comisión transparente.</p>
+      </div>
+      <div class="hero-badge">
+        <ion-icon name="flash"></ion-icon>
+        <div><b>Operación inmediata</b><small>Prototipo de ejecución</small></div>
+      </div>
+    </section>
+
+    <section class="dashboard-grid">
+      <div class="left-col">
+        <div class="balance-card">
+          <div class="card-head"><span>Saldo disponible</span><span class="pill">CLP</span></div>
+          <strong>{{ clp(portfolio.balanceClp) }}</strong>
+          <small>Saldo demo para pruebas</small>
+        </div>
+
+        <div class="assets-grid">
+          <button class="asset-card" [class.active]="asset === 'BTC'" (click)="selectAsset('BTC')">
+            <div class="coin btc">₿</div>
+            <div><span>Bitcoin</span><b>BTC</b></div>
+            <div class="asset-price"><strong>{{ clp(portfolio.btcPriceClp) }}</strong><small>Saldo {{ crypto(portfolio.btc) }} BTC</small></div>
+          </button>
+
+          <button class="asset-card" [class.active]="asset === 'ETH'" (click)="selectAsset('ETH')">
+            <div class="coin eth">◆</div>
+            <div><span>Ethereum</span><b>ETH</b></div>
+            <div class="asset-price"><strong>{{ clp(portfolio.ethPriceClp) }}</strong><small>Saldo {{ crypto(portfolio.eth) }} ETH</small></div>
+          </button>
+        </div>
+
+        <div class="history-card">
+          <div class="section-title"><div><span>Movimientos</span><small>Últimas operaciones</small></div><ion-icon name="refresh" (click)="load()"></ion-icon></div>
+          <div class="empty" *ngIf="portfolio.movements.length === 0">Todavía no hay operaciones.</div>
+          <div class="movement" *ngFor="let item of portfolio.movements.slice(0, 6)">
+            <div class="movement-icon" [class.sell]="item.type === 'SELL'">
+              <ion-icon [name]="item.type === 'BUY' ? 'arrow-down' : 'arrow-up'"></ion-icon>
+            </div>
+            <div class="movement-main">
+              <b>{{ item.type === 'BUY' ? 'Compra' : 'Venta' }} {{ item.asset }}</b>
+              <small>{{ item.date | date:'dd/MM/yyyy HH:mm' }}</small>
+            </div>
+            <div class="movement-amount">
+              <b>{{ clp(item.amountClp) }}</b>
+              <small>Comisión {{ clp(item.commissionClp) }}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="trade-card">
+        <div class="trade-top">
+          <div><span>Operar</span><small>{{ asset === 'BTC' ? 'Bitcoin' : 'Ethereum' }}</small></div>
+          <div class="tiny-coin" [class.eth]="asset === 'ETH'">{{ asset === 'BTC' ? '₿' : '◆' }}</div>
+        </div>
+
+        <ion-segment [(ngModel)]="type" (ionChange)="refreshQuote()">
+          <ion-segment-button value="BUY">Comprar</ion-segment-button>
+          <ion-segment-button value="SELL">Vender</ion-segment-button>
+        </ion-segment>
+
+        <label class="field-label">Monto en pesos</label>
+        <div class="amount-input">
+          <span>$</span>
+          <ion-input type="number" [(ngModel)]="amountClp" (ionInput)="refreshQuote()" min="1000"></ion-input>
+          <b>CLP</b>
+        </div>
+
+        <div class="presets">
+          <button (click)="setPreset(50000)">$50.000</button>
+          <button (click)="setPreset(100000)">$100.000</button>
+          <button (click)="setPreset(500000)">$500.000</button>
+        </div>
+
+        <div class="quote-box" *ngIf="quote">
+          <div><span>Precio {{ asset }}</span><b>{{ clp(quote.priceClp) }}</b></div>
+          <div><span>Comisión ({{ portfolio.commissionRate * 100 }}%)</span><b>{{ clp(quote.commissionClp) }}</b></div>
+          <div class="divider"></div>
+          <div><span>{{ type === 'BUY' ? 'Recibes aprox.' : 'Vendes aprox.' }}</span><strong>{{ crypto(quote.cryptoAmount) }} {{ asset }}</strong></div>
+          <div *ngIf="type === 'SELL'"><span>Recibes en CLP</span><strong>{{ clp(quote.netClp) }}</strong></div>
+        </div>
+
+        <p class="message ok" *ngIf="message">{{ message }}</p>
+        <p class="message error" *ngIf="error">{{ error }}</p>
+
+        <ion-button expand="block" class="trade-button" (click)="execute()" [disabled]="loading || !quote">
+          <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+          <span *ngIf="!loading">{{ type === 'BUY' ? 'Comprar' : 'Vender' }} {{ asset }}</span>
+        </ion-button>
+
+        <div class="safe-note"><ion-icon name="lock-closed"></ion-icon><span>Comisión visible antes de confirmar cada operación.</span></div>
+      </aside>
+    </section>
+  </main>
+
+  <ng-template #loadingState>
+    <div class="full-loader"><ion-spinner name="crescent"></ion-spinner><span>Cargando BitBank…</span></div>
+  </ng-template>
+</ion-content>
