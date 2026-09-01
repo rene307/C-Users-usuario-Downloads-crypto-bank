@@ -1,13 +1,19 @@
 package cl.cryptobank.service;
 
-import cl.cryptobank.model.*;
-import org.springframework.stereotype.Service;
-
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+
+import cl.cryptobank.model.Asset;
+import cl.cryptobank.model.PortfolioResponse;
+import cl.cryptobank.model.QuoteResponse;
+import cl.cryptobank.model.TradeRequest;
+import cl.cryptobank.model.TradeResult;
+import cl.cryptobank.model.TradeType;
 
 @Service
 public class TradingService {

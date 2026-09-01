@@ -39,3 +39,23 @@ Frontend: http://localhost:8100
 
 Este proyecto es un prototipo de interfaz y lógica. No ejecuta operaciones reales, no custodia dinero ni criptomonedas y no incluye autenticación, KYC/AML, seguridad bancaria, conexión a exchange, persistencia, auditoría ni cumplimiento regulatorio. Para operar con dinero real hay que agregar esos componentes antes de producción.
 # C-Users-usuario-Downloads-crypto-bank
+
+## 4. Control de versiones
+
+El proyecto utiliza Git y GitHub para el control de versiones.
+
+Ramas utilizadas:
+
+- main: versión principal.
+- develop: rama utilizada para desarrollo y pruebas.
+
+Comandos principales:
+
+```bash
+git init
+git add .
+git commit -m "first commit"
+git branch -M main
+git push -u origin main
+git checkout -b develop
+git push -u origin develop
